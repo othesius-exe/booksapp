@@ -147,7 +147,13 @@ public final class QueryUtils {
 
                 // Extract out the title, author and category of the book
                 String title = properties.getString("title");
-                String author = properties.getString("authors");
+                JSONArray authorArray = properties.getJSONArray("authors");
+                if (authorArray != null && authorArray.length() > 0) {
+                    for (int j = 0; j < authorArray.length(); j ++) {
+
+                    }
+                }
+                String author = authorArray.getString(0);
                 String category = properties.getString("mainCategory");
 
                 // Create a new {@link Book} object
