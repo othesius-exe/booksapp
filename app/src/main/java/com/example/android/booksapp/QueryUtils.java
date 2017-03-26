@@ -15,6 +15,8 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Utilities class for submitting a query with the books API
@@ -22,12 +24,12 @@ import java.nio.charset.Charset;
 
 public final class QueryUtils {
 
-    public static final String LOG_TAG = QueryUtils.class.getSimpleName();
+    private static final String LOG_TAG = QueryUtils.class.getSimpleName();
 
     /**
      * Query the Google Books Site
      */
-    public static Book fetchBookData(String requestUrl) {
+    public static List<Book> fetchBookData(String requestUrl) {
         // Create URL object
         URL url = createUrl(requestUrl);
 
@@ -40,7 +42,7 @@ public final class QueryUtils {
         }
 
         // Extract relevant fields from the JSON response and create an {@link book} object
-        Book book = extractBookFromJson(jsonResponse);
+        List<Book> book = extractBookFromJson(jsonResponse);
 
         // Return the {@link book}
         return book;
@@ -119,12 +121,15 @@ public final class QueryUtils {
     }
 
     // Extract the Books info from the JSON query response
-    public static Book extractBookFromJson(String bookJSON) {
+    public static List<Book> extractBookFromJson(String bookJSON) {
 
         // Tests the bookJSON for an empty string
         if (TextUtils.isEmpty(bookJSON)) {
             return null;
         }
+
+        // Create the books array
+        ArrayList<Book> bookArrayList = new ArrayList<>();
 
         //
         try {
@@ -143,11 +148,12 @@ public final class QueryUtils {
                 String category = properties.getString("category");
 
                 // Create a new {@link Book} object
-                return new Book(title, author, category);
+                Book book = new Book(title, author, category);
+                bookArrayList.add(book);
             }
         } catch (JSONException e) {
             Log.e(LOG_TAG, "Problem parsing the earthquake JSON results", e);
         }
-        return null;
+        return bookArrayList;
     }
 }

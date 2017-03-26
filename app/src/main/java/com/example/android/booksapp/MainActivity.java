@@ -1,16 +1,19 @@
 package com.example.android.booksapp;
 
-import android.content.AsyncTaskLoader;
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
+import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.SearchView;
 import android.widget.TextView;
@@ -18,11 +21,14 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<List<Book>> {
+public class MainActivity extends AppCompatActivity
+        implements LoaderCallbacks<List<Book>> {
 
     private String API_URL = "https://www.googleapis.com/books/v1/volumes?q=";
 
     private String API_KEY = "AIzaSyD9Yob2rv-7WHTs6_nklHadEw_0uc7IfKY";
+
+    public static final String LOG_TAG = MainActivity.class.getName();
 
     private BookAdapter mAdapter;
 
@@ -30,11 +36,11 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     public static final int BOOK_LOADER_ID = 1;
 
-    private ProgressBar progressBar = (ProgressBar) findViewById(R.id.progress_bar);
+    private ProgressBar mProgressBar = (ProgressBar) findViewById(R.id.progress_bar);
 
     SearchView mSearchView;
 
-    String mSearchFilter;
+    String mSearchFilter = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,16 +51,54 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        progressBar.setVisibility(View.GONE);
+        // Make the progress bar invisible on start
+        mProgressBar.setVisibility(View.GONE);
 
-        getSupportLoaderManager().initLoader(1, null, this).forceLoad();
+        LoaderManager loaderManager = getSupportLoaderManager();
+        loaderManager.initLoader(BOOK_LOADER_ID, null, this);
+
+        ListView bookListView = (ListView) findViewById(R.id.book_list);
+        mAdapter = new BookAdapter(this, new ArrayList<Book>());
+        bookListView.setAdapter(mAdapter);
+
+        mEmptyView = (TextView) findViewById(R.id.empty_view);
+        bookListView.setEmptyView(mEmptyView);
+
+        // Start a connectivity manager
+        ConnectivityManager connectivityManager =
+                (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
+        boolean isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
+
+        if (!isConnected) {
+            mEmptyView.setText(R.string.no_connection);
+        }
+
+    }
+    @Override
+    public Loader<List<Book>> onCreateLoader(int i, Bundle bundle) {
+        // TODO: Create a new loader for the given URL
+        Log.i(LOG_TAG, "Creating the Loader");
+        return new BooksLoader(this, API_URL);
     }
 
-    public Loader<List<Book>> onCreateLoader(int id, Bundle args) {
-        return new BooksLoader(MainActivity.this);
-
+    @Override
+    public void onLoadFinished(Loader<List<Book>> loader, List<Book> data) {
+        Log.i(LOG_TAG, "Loader finished");
+        mAdapter.clear();
+        mEmptyView.setText(R.string.none_found);
+        mProgressBar.setVisibility(View.GONE);
+        if (data != null && !data.isEmpty()){
+            mAdapter.addAll(data);
+        }
     }
 
+    @Override
+    public void onLoaderReset(Loader<List<Book>> loader) {
+        Log.i(LOG_TAG, "Reset");
+        mAdapter.clear();
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -64,25 +108,4 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         return true;
     }
 
-    public boolean onQueryTextChange(String newText) {
-        // Called when the action bar search text has changed.  Update
-        // the search filter, and restart the loader to do a new query
-        // with this filter.
-        String newFilter = !TextUtils.isEmpty(newText) ? newText : null;
-        // Don't do anything if the filter hasn't actually changed.
-        // Prevents restarting the loader when restoring state.
-        if (mSearchFilter == null && newFilter == null) {
-            return true;
-        }
-        if (mSearchFilter != null && mSearchFilter.equals(newFilter)) {
-            return true;
-        }
-        mSearchFilter = newFilter;
-        getLoaderManager().restartLoader(0, null, null);
-        return true;
-    }
-
-    @Override public boolean onQueryTextSubmit(String query) {
-        return true;
-    }
 }
