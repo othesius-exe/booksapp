@@ -6,4 +6,11 @@
     <string name="none_found">No books found</string>
 
     <string name="search">Search</string>
+
+    <string name="query_hint">Search by Author, Title or Category</string>
+
+    <!-- tools text -->
+    <string name="author_tool">Orson Scott Card</string>
+    <string name="title_tool">Ender\'s Game</string>
+    <string name="category_tool">Science Fiction</string>
 </resources>
