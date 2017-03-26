@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.SearchView;
@@ -38,6 +39,8 @@ public class MainActivity extends AppCompatActivity
 
     private ProgressBar mProgressBar = (ProgressBar) findViewById(R.id.progress_bar);
 
+    private LoaderManager mLoaderManager;
+
     SearchView mSearchView;
 
     String mSearchFilter = "";
@@ -54,8 +57,8 @@ public class MainActivity extends AppCompatActivity
         // Make the progress bar invisible on start
         mProgressBar.setVisibility(View.GONE);
 
-        LoaderManager loaderManager = getSupportLoaderManager();
-        loaderManager.initLoader(BOOK_LOADER_ID, null, this);
+        mLoaderManager = getSupportLoaderManager();
+        mLoaderManager.initLoader(BOOK_LOADER_ID, null, this);
 
         ListView bookListView = (ListView) findViewById(R.id.book_list);
         mAdapter = new BookAdapter(this, new ArrayList<Book>());
@@ -76,11 +79,18 @@ public class MainActivity extends AppCompatActivity
         }
 
     }
+
+    public void submit(View view) {
+        EditText searchView = (EditText) findViewById(R.id.search_bar);
+        mSearchFilter = searchView.getText().toString();
+        mLoaderManager.restartLoader(BOOK_LOADER_ID, null, this);
+    }
+
     @Override
     public Loader<List<Book>> onCreateLoader(int i, Bundle bundle) {
         // TODO: Create a new loader for the given URL
         Log.i(LOG_TAG, "Creating the Loader");
-        return new BooksLoader(this, API_URL);
+        return new BooksLoader(this, API_URL + mSearchFilter + API_KEY);
     }
 
     @Override

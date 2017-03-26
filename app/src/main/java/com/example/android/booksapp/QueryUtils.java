@@ -133,19 +133,22 @@ public final class QueryUtils {
 
         //
         try {
+            // Create an object out of the response
             JSONObject baseJsonResponse = new JSONObject(bookJSON);
+            // Create an array of books from the response
             JSONArray booksArray = baseJsonResponse.getJSONArray("items");
 
             // Check for results in the booksArray
-            if (booksArray.length() > 0) {
-                // Extract the desired information
-                JSONObject firstBook = booksArray.getJSONObject(0);
-                JSONObject properties = firstBook.getJSONObject("");
+            for (int i = 0; i < booksArray.length(); i++) {
+                // Get the book at the current index
+                JSONObject firstBook = booksArray.getJSONObject(i);
+                // Extract the book with the key "kind"
+                JSONObject properties = firstBook.getJSONObject("volumeInfo");
 
                 // Extract out the title, author and category of the book
                 String title = properties.getString("title");
                 String author = properties.getString("authors");
-                String category = properties.getString("category");
+                String category = properties.getString("mainCategory");
 
                 // Create a new {@link Book} object
                 Book book = new Book(title, author, category);

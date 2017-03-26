@@ -32,11 +32,12 @@ public class BookAdapter extends ArrayAdapter<Book> {
         // Get position of each item in the list
         Book thisBook = getItem(position);
 
-        // TODO Define all views to be used to display proper information
+        // Find views to use
         TextView authorView = (TextView) convertView.findViewById(R.id.author);
         TextView titleView = (TextView) convertView.findViewById(R.id.title);
         TextView categoryView = (TextView) convertView.findViewById(R.id.category);
 
+        // Set the appropriate information to each view
         authorView.setText(thisBook.getAuthor());
         titleView.setText(thisBook.getTitle());
         categoryView.setText(thisBook.getCategory());
