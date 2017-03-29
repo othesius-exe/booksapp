@@ -10,12 +10,9 @@ public class Book {
 
     private String mTitle;
 
-    private String mCategory;
-
-    public Book(String author, String title, String category) {
+    public Book(String author, String title) {
         mAuthor = author;
         mTitle = title;
-        mCategory = category;
     }
 
     // Define public methods for retrieving individual pieces of info on each book
@@ -27,17 +24,12 @@ public class Book {
     public String getTitle() {
         return mTitle;
     }
-    // Method to return Subject
-    public String getCategory() {
-        return mCategory;
-    }
 
     // Return a user readable string of the books info
     @Override
     public String toString() {
         return mTitle + " " +
-                mAuthor + " " +
-                mCategory;
+                mAuthor;
     }
 
 }

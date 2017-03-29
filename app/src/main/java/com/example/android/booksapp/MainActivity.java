@@ -8,15 +8,14 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.ProgressBar;
-import android.widget.SearchView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -27,7 +26,7 @@ public class MainActivity extends AppCompatActivity
 
     private String API_URL = "https://www.googleapis.com/books/v1/volumes?q=";
 
-    private String API_KEY = "AIzaSyD9Yob2rv-7WHTs6_nklHadEw_0uc7IfKY";
+    private String API_KEY = "&key=AIzaSyD9Yob2rv-7WHTs6_nklHadEw_0uc7IfKY";
 
     public static final String LOG_TAG = MainActivity.class.getName();
 
@@ -37,11 +36,9 @@ public class MainActivity extends AppCompatActivity
 
     public static final int BOOK_LOADER_ID = 1;
 
-    private ProgressBar mProgressBar = (ProgressBar) findViewById(R.id.progress_bar);
+    private ProgressBar mProgressBar;
 
     private LoaderManager mLoaderManager;
-
-    SearchView mSearchView;
 
     String mSearchFilter = "";
 
@@ -50,13 +47,10 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Set the toolbar as the action bar
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
         // Make the progress bar invisible on start
-        mProgressBar.setVisibility(View.GONE);
+        // mProgressBar.setVisibility(View.GONE);
 
+        // Set mLoaderManager and initialize the loader
         mLoaderManager = getSupportLoaderManager();
         mLoaderManager.initLoader(BOOK_LOADER_ID, null, this);
 
@@ -67,6 +61,20 @@ public class MainActivity extends AppCompatActivity
         mEmptyView = (TextView) findViewById(R.id.empty_view);
         bookListView.setEmptyView(mEmptyView);
 
+        final EditText searchView = (EditText) findViewById(R.id.search_bar);
+        Button searchSubmit = (Button) findViewById(R.id.submit_button);
+
+        searchSubmit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Create the search filter from the user input
+                mSearchFilter = searchView.getText().toString();
+
+                // Reset the loader, with new search parameters
+                mLoaderManager.restartLoader(BOOK_LOADER_ID, null, MainActivity.this);
+            }
+        });
+
         // Start a connectivity manager
         ConnectivityManager connectivityManager =
                 (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -74,16 +82,11 @@ public class MainActivity extends AppCompatActivity
         NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
         boolean isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
 
+        // If no connection display no connection message
         if (!isConnected) {
             mEmptyView.setText(R.string.no_connection);
         }
 
-    }
-
-    public void submit(View view) {
-        EditText searchView = (EditText) findViewById(R.id.search_bar);
-        mSearchFilter = searchView.getText().toString();
-        mLoaderManager.restartLoader(BOOK_LOADER_ID, null, this);
     }
 
     @Override
@@ -98,7 +101,6 @@ public class MainActivity extends AppCompatActivity
         Log.i(LOG_TAG, "Loader finished");
         mAdapter.clear();
         mEmptyView.setText(R.string.none_found);
-        mProgressBar.setVisibility(View.GONE);
         if (data != null && !data.isEmpty()){
             mAdapter.addAll(data);
         }
@@ -108,13 +110,14 @@ public class MainActivity extends AppCompatActivity
     public void onLoaderReset(Loader<List<Book>> loader) {
         Log.i(LOG_TAG, "Reset");
         mAdapter.clear();
+        mLoaderManager.restartLoader(BOOK_LOADER_ID, null, this);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.options_menu, menu);
-        mSearchView.setIconifiedByDefault(true);
+        //mSearchView.setIconifiedByDefault(true);
         return true;
     }
 

@@ -20,12 +20,4 @@
         android:layout_height="@dimen/list_item_height"
         tools:text="@string/title_tool"/>
 
-    <TextView
-        style="@style/list_style"
-        android:id="@+id/category"
-        android:layout_width="0dp"
-        android:layout_weight="1"
-        android:layout_height="@dimen/list_item_height"
-        tools:text="@string/category_tool"/>
-
 </LinearLayout>
