@@ -9,8 +9,6 @@ import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -117,14 +115,6 @@ public class MainActivity extends AppCompatActivity
         Log.i(LOG_TAG, "Reset");
         mAdapter.clear();
         mLoaderManager.restartLoader(BOOK_LOADER_ID, null, this);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.options_menu, menu);
-        //mSearchView.setIconifiedByDefault(true);
-        return true;
     }
 
 }
