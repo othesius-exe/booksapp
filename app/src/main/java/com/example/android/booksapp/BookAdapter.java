@@ -40,6 +40,12 @@ public class BookAdapter extends ArrayAdapter<Book> {
         authorView.setText(thisBook.getAuthor());
         titleView.setText(thisBook.getTitle());
 
+        authorView.setSelected(true);
+        authorView.requestFocus();
+
+        titleView.setSelected(true);
+        titleView.requestFocus();
+
         return convertView;
     }
 }

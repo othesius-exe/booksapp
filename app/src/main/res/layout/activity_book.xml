@@ -7,7 +7,7 @@
     <TextView
         style="@style/list_style"
         android:id="@+id/title"
-        android:layout_height="@dimen/list_item_height"
+        android:layout_height="wrap_content"
         android:layout_width="0dp"
         android:layout_weight="1"
         android:minHeight="@dimen/list_item_height"
@@ -16,7 +16,7 @@
     <TextView
         style="@style/list_style"
         android:id="@+id/author"
-        android:layout_height="@dimen/list_item_height"
+        android:layout_height="wrap_content"
         android:layout_width="0dp"
         android:layout_weight="1"
         android:minHeight="@dimen/list_item_height"
