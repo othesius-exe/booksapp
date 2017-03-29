@@ -151,7 +151,7 @@ public final class QueryUtils {
                 String author = "";
                 if (authorArray != null && authorArray.length() > 0) {
                     for (int j = 0; j < authorArray.length(); j ++) {
-
+                        author = authorArray.getString(j);
                     }
                 }
 

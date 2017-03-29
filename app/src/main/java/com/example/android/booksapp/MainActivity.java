@@ -71,8 +71,8 @@ public class MainActivity extends AppCompatActivity
                 String userInput = searchView.getText().toString();
                 mSearchFilter = userInput.replace(" ", "+");
 
+                // Initialize the loader
                 mLoaderManager.initLoader(BOOK_LOADER_ID, null, MainActivity.this);
-
 
                 // Reset the loader, with new search parameters
                 mLoaderManager.restartLoader(BOOK_LOADER_ID, null, MainActivity.this);
@@ -106,8 +106,8 @@ public class MainActivity extends AppCompatActivity
         Log.i(LOG_TAG, "Loader finished");
         mAdapter.clear();
         mEmptyView.setText(R.string.none_found);
+        mProgressBar.setVisibility(View.GONE);
         if (data != null && !data.isEmpty()){
-            mProgressBar.setVisibility(View.GONE);
             mAdapter.addAll(data);
         }
     }

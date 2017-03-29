@@ -16,7 +16,9 @@
         <item name="android:gravity">center</item>
         <item name="android:paddingLeft">@dimen/left_right_padding</item>
         <item name="android:paddingRight">@dimen/left_right_padding</item>
-        <item name="android:paddingTop">@dimen</item>
+        <item name="android:paddingTop">@dimen/top_bottom_padding</item>
+        <item name="android:paddingBottom">@dimen/top_bottom_padding</item>
+        <item name="android:singleLine">false</item>
     </style>
 
 </resources>
