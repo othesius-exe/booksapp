@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity
 
     public static final int BOOK_LOADER_ID = 1;
 
-    private ProgressBar mProgressBar;
+    public ProgressBar mProgressBar;
 
     private LoaderManager mLoaderManager;
 
@@ -48,11 +48,11 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
 
         // Make the progress bar invisible on start
-        // mProgressBar.setVisibility(View.GONE);
+        mProgressBar = (ProgressBar) findViewById(R.id.progress_bar);
+        mProgressBar.setVisibility(View.GONE);
 
         // Set mLoaderManager and initialize the loader
         mLoaderManager = getSupportLoaderManager();
-        mLoaderManager.initLoader(BOOK_LOADER_ID, null, this);
 
         ListView bookListView = (ListView) findViewById(R.id.book_list);
         mAdapter = new BookAdapter(this, new ArrayList<Book>());
@@ -68,7 +68,11 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View v) {
                 // Create the search filter from the user input
-                mSearchFilter = searchView.getText().toString();
+                String userInput = searchView.getText().toString();
+                mSearchFilter = userInput.replace(" ", "+");
+
+                mLoaderManager.initLoader(BOOK_LOADER_ID, null, MainActivity.this);
+
 
                 // Reset the loader, with new search parameters
                 mLoaderManager.restartLoader(BOOK_LOADER_ID, null, MainActivity.this);
@@ -93,6 +97,7 @@ public class MainActivity extends AppCompatActivity
     public Loader<List<Book>> onCreateLoader(int i, Bundle bundle) {
         // TODO: Create a new loader for the given URL
         Log.i(LOG_TAG, "Creating the Loader");
+        mProgressBar.setVisibility(View.VISIBLE);
         return new BooksLoader(this, API_URL + mSearchFilter + API_KEY);
     }
 
@@ -102,6 +107,7 @@ public class MainActivity extends AppCompatActivity
         mAdapter.clear();
         mEmptyView.setText(R.string.none_found);
         if (data != null && !data.isEmpty()){
+            mProgressBar.setVisibility(View.GONE);
             mAdapter.addAll(data);
         }
     }

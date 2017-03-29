@@ -2,12 +2,10 @@
     <string name="app_name">Books App</string>
 
     <string name="no_connection">No internet connection</string>
-
     <string name="none_found">No books found</string>
+    <string name="no_author">No authors listed</string>
 
     <string name="search">Search</string>
-
-    <string name="query_hint">Search by Author, Title or Category</string>
 
     <!-- tools text -->
     <string name="author_tool">Orson Scott Card</string>

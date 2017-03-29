@@ -16,7 +16,6 @@
             android:layout_width="0dp"
             android:layout_weight="3"
             android:layout_height="@dimen/search_bar_height"
-            android:layout_below="@+id/sear"
             android:actionViewClass="search"
             android:hint="@string/search"
             android:paddingLeft="@dimen/left_right_padding"
