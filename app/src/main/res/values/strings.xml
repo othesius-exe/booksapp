@@ -4,6 +4,7 @@
     <string name="no_connection">No internet connection</string>
     <string name="none_found">No books found</string>
     <string name="no_author">No authors listed</string>
+    <string name="perform_search">Search for books by author or title</string>
 
     <string name="search">Search</string>
 

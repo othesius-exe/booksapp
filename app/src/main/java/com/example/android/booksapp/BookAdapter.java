@@ -21,6 +21,7 @@ public class BookAdapter extends ArrayAdapter<Book> {
     public BookAdapter(Activity context, ArrayList<Book> books) {
         super(context, 0, books);
     }
+
     // Finds a view to inflate
     @NonNull
     @Override
@@ -48,4 +49,5 @@ public class BookAdapter extends ArrayAdapter<Book> {
 
         return convertView;
     }
+
 }

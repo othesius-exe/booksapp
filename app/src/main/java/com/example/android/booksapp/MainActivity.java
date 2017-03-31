@@ -40,6 +40,10 @@ public class MainActivity extends AppCompatActivity
 
     String mSearchFilter = "";
 
+    private String mUserInput;
+
+    private ArrayList<Book> mBookList;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,6 +55,7 @@ public class MainActivity extends AppCompatActivity
 
         // Set mLoaderManager and initialize the loader
         mLoaderManager = getSupportLoaderManager();
+        mLoaderManager.initLoader(BOOK_LOADER_ID, null, MainActivity.this);
 
         ListView bookListView = (ListView) findViewById(R.id.book_list);
         mAdapter = new BookAdapter(this, new ArrayList<Book>());
@@ -59,36 +64,35 @@ public class MainActivity extends AppCompatActivity
         mEmptyView = (TextView) findViewById(R.id.empty_view);
         bookListView.setEmptyView(mEmptyView);
 
+        mEmptyView.setText(R.string.perform_search);
+
         final EditText searchView = (EditText) findViewById(R.id.search_bar);
         Button searchSubmit = (Button) findViewById(R.id.submit_button);
 
         searchSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Create the search filter from the user input
-                String userInput = searchView.getText().toString();
-                mSearchFilter = userInput.replace(" ", "+");
 
-                // Initialize the loader
-                mLoaderManager.initLoader(BOOK_LOADER_ID, null, MainActivity.this);
+                // Start a connectivity manager
+                ConnectivityManager connectivityManager =
+                        (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+
+                NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
+                boolean isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
+
+                // If no connection display no connection message
+                if (!isConnected) {
+                    mEmptyView.setText(R.string.no_connection);
+                }
+
+                // Create the search filter from the user input
+                mUserInput = searchView.getText().toString();
+                mSearchFilter = mUserInput.replace(" ", "+");
 
                 // Reset the loader, with new search parameters
                 mLoaderManager.restartLoader(BOOK_LOADER_ID, null, MainActivity.this);
             }
         });
-
-        // Start a connectivity manager
-        ConnectivityManager connectivityManager =
-                (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-
-        NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
-        boolean isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
-
-        // If no connection display no connection message
-        if (!isConnected) {
-            mEmptyView.setText(R.string.no_connection);
-        }
-
     }
 
     @Override
@@ -103,7 +107,6 @@ public class MainActivity extends AppCompatActivity
     public void onLoadFinished(Loader<List<Book>> loader, List<Book> data) {
         Log.i(LOG_TAG, "Loader finished");
         mAdapter.clear();
-        mEmptyView.setText(R.string.none_found);
         mProgressBar.setVisibility(View.GONE);
         if (data != null && !data.isEmpty()){
             mAdapter.addAll(data);
@@ -117,4 +120,17 @@ public class MainActivity extends AppCompatActivity
         mLoaderManager.restartLoader(BOOK_LOADER_ID, null, this);
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle savedInstanceState) {
+        savedInstanceState.putString(mUserInput, mUserInput);
+        savedInstanceState.putParcelableArrayList("bookList", mBookList);
+        super.onSaveInstanceState(savedInstanceState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        mUserInput = savedInstanceState.getString(mUserInput);
+        mBookList = savedInstanceState.getParcelableArrayList("bookList");
+    }
 }

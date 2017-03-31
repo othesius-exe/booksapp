@@ -149,9 +149,10 @@ public final class QueryUtils {
                 String title = properties.getString("title");
                 JSONArray authorArray = properties.getJSONArray("authors");
                 String author = "";
-                if (authorArray != null && authorArray.length() > 0) {
+
+                if (properties.has("authors")){
                     for (int j = 0; j < authorArray.length(); j ++) {
-                        author = authorArray.getString(j);
+                        author = authorArray.optString(j);
                     }
                 }
 
@@ -160,7 +161,7 @@ public final class QueryUtils {
                 bookArrayList.add(book);
             }
         } catch (JSONException e) {
-            Log.e(LOG_TAG, "Problem parsing the earthquake JSON results", e);
+            Log.e(LOG_TAG, "Problem parsing the volumes JSON results", e);
         }
         return bookArrayList;
     }
